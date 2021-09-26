@@ -11,7 +11,14 @@ export default {
       { hid: "description", name: "description", content: "" },
       { name: "format-detection", content: "telephone=no" }
     ],
-    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+    script: [
+      { src: "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js" },
+      {
+        src:
+          "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/ScrollTrigger.min.js"
+      }
+    ]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -30,8 +37,17 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/bootstrap
     "bootstrap-vue/nuxt",
-    "@nuxtjs/style-resources"
+    "@nuxtjs/style-resources",
+    "nuxt-compress"
   ],
+  "nuxt-compress": {
+    gzip: {
+      threshold: 8192
+    },
+    brotli: {
+      threshold: 8192
+    }
+  },
   bootstrapVue: {
     icons: true,
     bootstrapCSS: false, // Or `css: false`
@@ -41,5 +57,37 @@ export default {
     scss: ["@/assets/scss/_variables.scss", "@/assets/scss/_mixins.scss"]
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {}
+  build: {},
+  router: {
+    scrollBehavior: async function(to, from, savedPosition) {
+      if (savedPosition) {
+        return savedPosition;
+      }
+
+      const findEl = async (hash, x = 0) => {
+        return (
+          document.querySelector(hash) ||
+          new Promise(resolve => {
+            if (x > 50) {
+              return resolve(document.querySelector("#app"));
+            }
+            setTimeout(() => {
+              resolve(findEl(hash, ++x || 1));
+            }, 100);
+          })
+        );
+      };
+
+      if (to.hash) {
+        let el = await findEl(to.hash);
+        if ("scrollBehavior" in document.documentElement.style) {
+          return window.scrollTo({ top: el.offsetTop, behavior: "smooth" });
+        } else {
+          return window.scrollTo(0, el.offsetTop);
+        }
+      }
+
+      return { x: 0, y: 0 };
+    }
+  }
 };

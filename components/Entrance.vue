@@ -22,7 +22,7 @@ h2 {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: reveal 2s ease-in-out 2s forwards;
+  animation: reveal 2s ease-in-out 0.5s forwards;
 
   @keyframes reveal {
     0% {

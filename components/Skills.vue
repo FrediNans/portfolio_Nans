@@ -1,10 +1,17 @@
 <template>
-  <div class="bg pt-3 d-flex flex-column justify-content-center">
-    <h3 class="text-center h4 mb-3 mb-sm-5">COMPÉTENCES</h3>
+  <section
+    ref="section"
+    id="skills"
+    class="bg pt-5 pt-sm-3 d-flex flex-column justify-content-center"
+  >
+    <h3 ref="title" class="text-center h4 mt-5 mt-sm-0 mb-3 mb-sm-5">
+      COMPÉTENCES
+    </h3>
     <div
       class="d-flex align-items-center justify-content-center flex-column flex-sm-row flex-sm-wrap justify-content-sm-around col-xl-8 mx-auto"
     >
       <div
+        ref="skillCards"
         class="skillCards mb-3 py-2"
         v-for="skill in skills"
         :key="skill.name"
@@ -33,7 +40,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -99,7 +106,7 @@ export default {
         },
         {
           name: "github",
-          value: 6
+          value: 5
         },
         {
           name: "français",
@@ -111,7 +118,40 @@ export default {
         }
       ]
     };
-  }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      const { section, title, skillCards } = this.$refs;
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "-50% center",
+            end: "bottom center",
+            //markers: true,
+            toggleActions: "restart reset restart"
+          }
+        })
+        .from(title, {
+          duration: 1.2,
+          ease: "bounce.out(1, 0.3)",
+          x: 500
+        })
+        .from(skillCards, {
+          duration: 0.5,
+          ease: "expo.out(1, 0.3)",
+          scale: 0,
+          opacity: 0
+        })
+        .from(".skillPoint", {
+          duration: 0.1,
+          ease: "expo.out(1, 0.3)",
+          opacity: 0,
+          stagger: 0.02
+        });
+    });
+  },
+  methods: {}
 };
 </script>
 
@@ -119,13 +159,14 @@ export default {
 .bg {
   width: 100%;
   min-height: 100vh;
-  background: url("../static/bg3.webp") no-repeat center center fixed;
+  background: url("../public/img/bg3.webp") no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 .skillCards {
   background-color: $secondary;
